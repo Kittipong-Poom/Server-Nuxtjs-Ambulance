@@ -1,0 +1,30 @@
+{
+  "name": "express-nuxt-crud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec babel-node server.js",
+    "start": "node --experimental-modules server.js",
+    "start-regular": "node ./node_modules/.bin/babel-node --presets @babel/preset-env server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "nodemon": "^3.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.11",
+    "@babel/node": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/register": "^7.22.5",
+    "nodemon": "^3.0.1"
+  }
+}
