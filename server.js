@@ -24,7 +24,7 @@ app.get('/api/patients', (req, res) => {
 });
 
 app.get('/api/jobs', (req, res) => {
-  res.json(jobs);
+  res.json(jobs); 
 });
 
 // Get a specific patient
