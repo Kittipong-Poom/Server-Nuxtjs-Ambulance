@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 
 let patients = []
 let jobs =[]
+let caseurgents = []
 
 let conn = null
 
@@ -53,6 +54,16 @@ app.get('/api/jobs', async (req, res) => {
   }
 });
 
+app.get('/api/caseurgents', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM caseurgents')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
 app.get('/api/patients/:id', async (req,res) =>{
   try{
     let id = req.params.id;
@@ -85,6 +96,21 @@ app.get('/api/jobs/:id', async (req, res) => {
   }
 });
 
+app.get('/api/caseurgents/:id', async (req, res) => {
+  try{
+    let id = req.params.id;
+    const results = await conn.query('SELECT * FROM caseurgents WHERE id = ?', id)
+    if(results[0].length == 0 ){
+      throw { statusCode :404,message:'หาไม่เจอ'}
+        
+    } 
+    res.json(results[0][0]);
+  }catch(error){ 
+    console.error('Error fetching caseurgents by id:', error.message);
+    let statusCode = error.statusCode || 500
+    res.status(statusCode).json({ error: 'Something went wrong fetching caseurgents by id' });
+  }
+});
 
 app.post('/api/patients', async (req, res) => {
   try {
@@ -106,6 +132,20 @@ app.post('/api/jobs', async (req, res) => {
     newJob.id = results.insertId;
     console.log('Inserted job:', newJob); // Log inserted job
     res.json(newJob);
+  } catch (error) { 
+    console.error('Error executing MySQL query:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } 
+});
+
+app.post('/api/caseurgents', async (req, res) => {
+  try {
+    const newUrgents = req.body;
+    const [results] = await conn.query('INSERT INTO caseurgents SET ?', newUrgents);
+        
+    newUrgents.id = results.insertId;
+    console.log('Inserted Urgents:', newUrgents); // Log inserted job
+    res.json(newUrgents);
   } catch (error) { 
     console.error('Error executing MySQL query:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -139,6 +179,19 @@ app.put('/api/jobs/:id', async (req, res) => {
   } 
 });
  
+app.put('/api/caseurgents/:id', async (req, res) => {
+  try{
+    let id = req.params.id
+    const updateurgents = req.body
+    const results = await conn.query('UPDATE caseurgents SET ? WHERE caseurgent_id = ?', [updateurgents,id])
+    res.json(results[0])
+    console.log('updateurgents', updateurgents);
+  }catch(error){
+    console.error('Error data cannot Update caseurgents',error.message)
+    res.status(500).json({error:'อัพเดตไม่ได้'})
+  } 
+});
+
 // Delete a patient
 app.delete('/api/patients/:patient_id', async (req, res) => {
   try{
@@ -158,6 +211,20 @@ app.delete('/api/jobs/:id', async (req, res) => {
   try{
     let id = req.params.id
     const results = await conn.query('DELETE FROM jobs WHERE id = ?',id)
+    res.json({
+      message:'delete ok',
+      data:results[0]
+    })
+  }catch(error){
+    console.error('Error cannot delete data',error.message)
+    res.status(500).json({error:'ลบไม่ได้'})
+  }
+});
+
+app.delete('/api/caseurgents/:id', async (req, res) => {
+  try{
+    let id = req.params.id
+    const results = await conn.query('DELETE FROM caseurgents WHERE caseurgent_id = ?',id)
     res.json({
       message:'delete ok',
       data:results[0]
