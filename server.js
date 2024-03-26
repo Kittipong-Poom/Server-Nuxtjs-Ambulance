@@ -44,15 +44,6 @@ app.get('/api/patients', async (req, res) => {
   
 });
 
-app.get('/api/jobs', async (req, res) => {
-  try{
-    const results = await conn.query('SELECT * FROM jobs')
-    res.json(results[0])
-  }catch (error){
-    console.error('Error fectching jobs: ',error.message)
-    res.status(500).json({error:'Error fectching jobs'})
-  }
-});
 
 app.get('/api/caseurgents', async (req, res) => {
   try{
@@ -63,6 +54,68 @@ app.get('/api/caseurgents', async (req, res) => {
     res.status(500).json({error:'Error fectching caseurgents'})
   }
 });
+
+app.get('/api/gettype', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `patients` WHERE type = "ผู้ป่วยติดเตียง"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+app.get('/api/gettype/service', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `patients` WHERE type = "งานบริการ"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+app.get('/api/getviolence', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `caseurgents` WHERE violence = "ผู้ป่วยฉุกเฉินวิกฤติ"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+app.get('/api/getviolence/yellow', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `caseurgents` WHERE violence = "ผู้ป่วยฉุกเฉินเร่งด่วน"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+app.get('/api/getviolence/green', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `caseurgents` WHERE violence = "ผู้ป่วยไม่ฉุกเฉิน"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+app.get('/api/getviolence/white', async (req, res) => {
+  try{
+    const results = await conn.query('SELECT * FROM `caseurgents` WHERE violence = "ผู้ป่วยทั่วไป"')
+    res.json(results[0])
+  }catch (error){
+    console.error('Error fectching caseurgents: ',error.message)
+    res.status(500).json({error:'Error fectching caseurgents'})
+  }
+});
+
+
 
 app.get('/api/patients/:id', async (req,res) =>{
   try{
@@ -141,10 +194,12 @@ app.post('/api/jobs', async (req, res) => {
 app.post('/api/caseurgents', async (req, res) => {
   try {
     const newUrgents = req.body;
-    const [results] = await conn.query('INSERT INTO caseurgents SET ?', newUrgents);
-        
+    const sql = 'INSERT INTO caseurgents SET ?'; // Using a parameterized query
+
+    const [results] = await conn.query(sql, newUrgents);
+
     newUrgents.id = results.insertId;
-    console.log('Inserted Urgents:', newUrgents); // Log inserted job
+    console.log('Inserted Urgents:', [newUrgents]); // Log inserted job
     res.json(newUrgents);
   } catch (error) { 
     console.error('Error executing MySQL query:', error.message);
