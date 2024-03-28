@@ -9,7 +9,7 @@ import mysql from "mysql2/promise";
 
 const app = express();
 const port = 5000;
-
+ 
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -21,7 +21,7 @@ const Mysqlinit = async () => {
     user: "root",
     password: "root",
     database: "ambulance3",
-    port: 3306,
+    port: 8889,
   });
 };
 
@@ -382,6 +382,19 @@ app.delete("/api/caseurgents/:id", async (req, res) => {
   } catch (error) {
     console.error("Error cannot delete data", error.message);
     res.status(500).json({ error: "ลบไม่ได้" });
+  }
+});
+app.get('/api/latlong', async (req, res) => {
+  try {
+    const results = await conn.query('SELECT lati, longi FROM caseurgents');
+    if (results[0].length === 0) {
+      throw { statusCode: 404, message: 'ไม่พบข้อมูลพิกัด' };
+    }
+    res.json(results[0]);
+  } catch (error) {
+    console.error('Error fetching all caseurgents:', error.message);
+    let statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ error: 'เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด' });
   }
 });
 
