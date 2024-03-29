@@ -199,20 +199,18 @@ app.get("/api/getviolence/white", async (req, res) => {
   }
 });
 
-app.get("/api/patients/:id", async (req, res) => {
+app.get("/api/patients/:hn_id", async (req, res) => {
   try {
-    let id = req.params.id;
-    const results = await conn.query("SELECT * FROM patients WHERE id = ?", id);
+    let hn_id = req.params.hn_id;
+    const results = await conn.query("SELECT * FROM ambulance WHERE hn_id = ?",hn_id);
     if (results[0].length == 0) {
-      throw { statusCode: 404, message: "หาไม่เจอ" };
+      return res.status(404).json({ message: "Patient not found" });
     }
     res.json(results[0][0]);
   } catch (error) {
-    console.error("Error fetching patient by id:", error.message);
+    console.error("Error fetching patient by hn_id:", error.message);
     let statusCode = error.statusCode || 500;
-    res
-      .status(statusCode)
-      .json({ error: "Something went wrong fetching patient by id" });
+    res.status(statusCode).json({ error: "Something went wrong fetching patient by hn_id" });
   }
 });
 
@@ -332,7 +330,6 @@ app.put("/api/patientsedit/:hn_id", async (req, res) => {
   }
 });
 
-
 // app.put("/api/jobs/:id", async (req, res) => {
 //   try {
 //     let id = req.params.id;
@@ -414,20 +411,21 @@ app.delete("/api/caseurgents/:id", async (req, res) => {
   }
 });
 
-app.get('/api/latlong', async (req, res) => {
+app.get("/api/latlong", async (req, res) => {
   try {
-    const results = await conn.query('SELECT lati, longi FROM caseurgents');
+    const results = await conn.query("SELECT lati, longi FROM caseurgents");
     if (results[0].length === 0) {
-      throw { statusCode: 404, message: 'ไม่พบข้อมูลพิกัด' };
+      throw { statusCode: 404, message: "ไม่พบข้อมูลพิกัด" };
     }
     res.json(results[0]);
   } catch (error) {
-    console.error('Error fetching all caseurgents:', error.message);
+    console.error("Error fetching all caseurgents:", error.message);
     let statusCode = error.statusCode || 500;
-    res.status(statusCode).json({ error: 'เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด' });
+    res
+      .status(statusCode)
+      .json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด" });
   }
 });
-
 
 app.listen(port, async () => {
   await Mysqlinit();
