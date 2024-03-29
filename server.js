@@ -118,7 +118,7 @@ app.get("/api/caseurgents", async (req, res) => {
 app.get("/api/gettype", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `patients` WHERE type = "ผู้ป่วยติดเตียง"'
+      'SELECT * FROM `ambulance` WHERE type_patient_id = "5"'
     );
     res.json(results[0]);
   } catch (error) {
@@ -130,7 +130,19 @@ app.get("/api/gettype", async (req, res) => {
 app.get("/api/gettype/service", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `patients` WHERE type = "งานบริการ"'
+      'SELECT * FROM `ambulance` WHERE type_patient_id = "4"'
+    );
+    res.json(results[0]);
+  } catch (error) {
+    console.error("Error fectching caseurgents: ", error.message);
+    res.status(500).json({ error: "Error fectching caseurgents" });
+  }
+});
+
+app.get("/api/gettype/service/other", async (req, res) => {
+  try {
+    const results = await conn.query(
+      'SELECT * FROM `ambulance` WHERE type_patient_id = "6"'
     );
     res.json(results[0]);
   } catch (error) {
@@ -304,6 +316,23 @@ app.put("/api/patients/:hn_id", async (req, res) => {
   }
 });
 
+app.put("/api/patientsedit/:hn_id", async (req, res) => {
+  try {
+    const hn_id = req.params.hn_id;
+    const updatepatient = req.body;
+    const results = await conn.query("UPDATE ambulance SET ? WHERE hn_id = ?", [
+      updatepatient,
+      hn_id,
+    ]);
+    res.json(results[0]);
+    console.log("updatepatient", updatepatient);
+  } catch (error) {
+    console.error("Error data cannot Update patient", error.message);
+    res.status(500).json({ error: "อัพเดตไม่ได้" });
+  }
+});
+
+
 // app.put("/api/jobs/:id", async (req, res) => {
 //   try {
 //     let id = req.params.id;
@@ -341,7 +370,7 @@ app.delete("/api/patients/:hn_id", async (req, res) => {
   try {
     let hn_id = req.params.hn_id;
     const results = await conn.query(
-      "DELETE FROM patients WHERE hn_id = ?",
+      "DELETE FROM ambulance WHERE hn_id = ?",
       hn_id
     );
     res.json({
@@ -384,6 +413,21 @@ app.delete("/api/caseurgents/:id", async (req, res) => {
     res.status(500).json({ error: "ลบไม่ได้" });
   }
 });
+
+app.get('/api/latlong', async (req, res) => {
+  try {
+    const results = await conn.query('SELECT lati, longi FROM caseurgents');
+    if (results[0].length === 0) {
+      throw { statusCode: 404, message: 'ไม่พบข้อมูลพิกัด' };
+    }
+    res.json(results[0]);
+  } catch (error) {
+    console.error('Error fetching all caseurgents:', error.message);
+    let statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ error: 'เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด' });
+  }
+});
+
 
 app.listen(port, async () => {
   await Mysqlinit();
