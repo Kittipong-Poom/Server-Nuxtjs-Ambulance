@@ -34,7 +34,7 @@ app.get("/api/patients", async (req, res) => {
       JOIN ages ON ambulance.ages_id = ages.age_id
       JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
       JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
-      WHERE ambulance.time IS NULL OR ambulance.time = '';
+      
       `
     );
     res.json(results[0]);
@@ -43,6 +43,7 @@ app.get("/api/patients", async (req, res) => {
     res.status(500).json({ error: "Error fectching patients" });
   }
 });
+
 // Get all patients
 app.get("/api/patients/time", async (req, res) => {
   try {
@@ -115,41 +116,63 @@ app.get("/api/caseurgents", async (req, res) => {
   }
 });
 
-app.get("/api/gettype", async (req, res) => {
+app.get("/api/bedCount", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "5"'
+      `SELECT *
+      FROM ambulance
+      JOIN ages ON ambulance.ages_id = ages.age_id
+      JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
+      JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
+      JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
+      WHERE ambulance.type_patient_id = '5' AND (ambulance.time IS NOT NULL OR ambulance.time != '')
+      `
     );
     res.json(results[0]);
   } catch (error) {
-    console.error("Error fectching caseurgents: ", error.message);
-    res.status(500).json({ error: "Error fectching caseurgents" });
+    console.error("Error fectching patient: ", error.message);
+    res.status(500).json({ error: "Error fectching patients" });
   }
 });
 
-app.get("/api/gettype/service", async (req, res) => {
+app.get("/api/serviceCount", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "4"'
+      `SELECT *
+      FROM ambulance
+      JOIN ages ON ambulance.ages_id = ages.age_id
+      JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
+      JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
+      JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
+      WHERE ambulance.type_patient_id = '4' AND (ambulance.time IS NOT NULL OR ambulance.time != '')
+      `
     );
     res.json(results[0]);
   } catch (error) {
-    console.error("Error fectching caseurgents: ", error.message);
-    res.status(500).json({ error: "Error fectching caseurgents" });
+    console.error("Error fectching patient: ", error.message);
+    res.status(500).json({ error: "Error fectching patients" });
   }
 });
 
 app.get("/api/gettype/service/other", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "6"'
+      `SELECT *
+      FROM ambulance
+      JOIN ages ON ambulance.ages_id = ages.age_id
+      JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
+      JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
+      JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
+      WHERE ambulance.type_patient_id = '6' AND (ambulance.time IS NOT NULL OR ambulance.time != '')
+      `
     );
     res.json(results[0]);
   } catch (error) {
-    console.error("Error fectching caseurgents: ", error.message);
-    res.status(500).json({ error: "Error fectching caseurgents" });
+    console.error("Error fectching patient: ", error.message);
+    res.status(500).json({ error: "Error fectching patients" });
   }
 });
+
 
 app.get("/api/getviolence", async (req, res) => {
   try {
