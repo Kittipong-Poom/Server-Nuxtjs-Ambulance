@@ -8,14 +8,14 @@ import cors from "cors";
 import mysql from "mysql2/promise";
 
 const app = express();
-const port = 5000;
+const port =  5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
 let conn = null;
 
-const Mysqlinit = async () => {
+const Myserverambulance = async () => {
   conn = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -30,10 +30,10 @@ app.get("/api/patients", async (req, res) => {
   try {
     const results = await conn.query(
       `SELECT *
-      FROM ambulance
-      JOIN ages ON ambulance.ages_id = ages.age_id
-      JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
-      JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
+      FROM patient
+      JOIN ages ON patient.ages_id = ages.age_id
+      JOIN type_patient ON patient.type_patient_id = type_patient.type_patient_id
+      JOIN tracking_patient ON patient.tracking_patient_id = tracking_patient.tracking_id
       `
     );
     res.json(results[0]);
@@ -48,12 +48,12 @@ app.get("/api/patients/time", async (req, res) => {
   try { 
     const results = await conn.query(
       `SELECT *
-      FROM ambulance
-      JOIN ages ON ambulance.ages_id = ages.age_id
-      JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
-      JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
-      JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
-      WHERE ambulance.time IS NOT NULL OR ambulance.time != '';
+      FROM patient
+      JOIN ages ON patient.ages_id = ages.age_id
+      JOIN type_patient ON patient.type_patient_id = type_patient.type_patient_id
+      JOIN tracking_patient ON patient.tracking_patient_id = tracking_patient.tracking_id
+      JOIN status_case ON patient.status_case_id = status_case.casestatus_id
+      WHERE patient.time IS NOT NULL OR patient.time != '';
       `
     );
     res.json(results[0]);
@@ -65,7 +65,7 @@ app.get("/api/patients/time", async (req, res) => {
 app.get("/api/patients/:hn_id", async (req, res) => {
   try {
     const hn_id = req.params.hn_id;
-    const [results] = await conn.query("SELECT * FROM ambulance WHERE hn_id = ?", [hn_id]);
+    const [results] = await conn.query("SELECT * FROM patient WHERE hn_id = ?", [hn_id]);
     const appointment = results[0];
     res.json(appointment);
   } catch (error) {
@@ -136,68 +136,10 @@ app.get("/api/caseurgents", async (req, res) => {
   }
 });
 
-// app.get("/api/bedCount", async (req, res) => {
-//   try {
-//     const results = await conn.query(
-//       `SELECT *
-//       FROM ambulance
-//       JOIN ages ON ambulance.ages_id = ages.age_id
-//       JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
-//       JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
-//       JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
-//       WHERE ambulance.type_patient_id = '5'
-//       `
-//     );
-//     res.json(results[0]);
-//   } catch (error) {
-//     console.error("Error fetching patient: ", error.message);
-//     res.status(500).json({ error: "Error fetching patients" });
-//   }
-// });
-
-// app.get("/api/serviceCount", async (req, res) => {
-//   try {
-//     const results = await conn.query(
-//       `SELECT *
-//       FROM ambulance
-//       JOIN ages ON ambulance.ages_id = ages.age_id
-//       JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
-//       JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
-//       JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
-//       WHERE ambulance.type_patient_id = '4'
-//       `
-//     );
-//     res.json(results[0]);
-//   } catch (error) {
-//     console.error("Error fetching patient: ", error.message);
-//     res.status(500).json({ error: "Error fetching patients" });
-//   }
-// });
-
-// app.get("/api/gettype/service/other", async (req, res) => {
-//   try {
-//     const results = await conn.query(
-//       `SELECT *
-//       FROM ambulance
-//       JOIN ages ON ambulance.ages_id = ages.age_id
-//       JOIN type_patient ON ambulance.type_patient_id = type_patient.type_patient_id
-//       JOIN tracking_patient ON ambulance.tracking_patient_id = tracking_patient.tracking_id
-//       JOIN status_case ON ambulance.status_case_id = status_case.casestatus_id
-//       WHERE ambulance.type_patient_id = '6'
-//       `
-//     );
-//     res.json(results[0]);
-//   } catch (error) {
-//     console.error("Error fetching patient: ", error.message);
-//     res.status(500).json({ error: "Error fetching patients" });
-//   }
-// });
-
-
 app.get("/api/gettype/service/other", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "6"'
+      'SELECT * FROM `patient` WHERE type_patient_id = "6"'
     );
     res.json(results[0]);
   } catch (error) {
@@ -209,7 +151,7 @@ app.get("/api/gettype/service/other", async (req, res) => {
 app.get("/api/serviceCount", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "4"'
+      'SELECT * FROM `patient` WHERE type_patient_id = "4"'
     );
     res.json(results[0]);
   } catch (error) {
@@ -221,7 +163,7 @@ app.get("/api/serviceCount", async (req, res) => {
 app.get("/api/bedCount", async (req, res) => {
   try {
     const results = await conn.query(
-      'SELECT * FROM `ambulance` WHERE type_patient_id = "5"'
+      'SELECT * FROM `patient` WHERE type_patient_id = "5"'
     );
     res.json(results[0]);
   } catch (error) {
@@ -281,7 +223,7 @@ app.get("/api/getviolence/white", async (req, res) => {
 app.get("/api/patients/:hn_id", async (req, res) => {
   try {
     let hn_id = req.params.hn_id;
-    const results = await conn.query("SELECT * FROM ambulance WHERE hn_id = ?",hn_id);
+    const results = await conn.query("SELECT * FROM patient WHERE hn_id = ?",hn_id);
     if (results[0].length == 0) {
       return res.status(404).json({ message: "Patient not found" });
     }
@@ -318,7 +260,7 @@ app.get("/api/caseurgents/:id", async (req, res) => {
 app.post("/api/patients", async (req, res) => {
   try {
     const newPatient = req.body;
-    const [results] = await conn.query("INSERT INTO ambulance SET ?", [
+    const [results] = await conn.query("INSERT INTO patient SET ?", [
       newPatient,
     ]);
     console.log(newPatient);
@@ -370,9 +312,9 @@ app.get("/api/appointments/:hn", async (req, res) => {
       FROM 
         appointments
       JOIN 
-        ambulance
+      patient
       ON 
-        appointments.hn = ambulance.hn
+        appointments.hn = patient.hn
       WHERE 
         appointments.hn = ?`, 
       [hn]
@@ -424,7 +366,7 @@ app.put("/api/patients/:hn_id", async (req, res) => {
   try {
     const hn_id = req.params.hn_id;
     const updatepatient = req.body;
-    const results = await conn.query("UPDATE ambulance SET ? WHERE hn_id = ?", [
+    const results = await conn.query("UPDATE patient SET ? WHERE hn_id = ?", [
       updatepatient,
       hn_id,
     ]);
@@ -441,7 +383,7 @@ app.put("/api/patientsedit/:hn_id", async (req, res) => {
     const hn_id = req.params.hn_id;
     const updatepatient = req.body;
     
-    const results = await conn.query("UPDATE ambulance SET ? WHERE hn_id = ?", [
+    const results = await conn.query("UPDATE patient SET ? WHERE hn_id = ?", [
       updatepatient,
       hn_id,
     ]);
@@ -491,7 +433,7 @@ app.delete("/api/patients/:hn_id", async (req, res) => {
   try {
     let hn_id = req.params.hn_id;
     const results = await conn.query(
-      "DELETE FROM ambulance WHERE hn_id = ?",
+      "DELETE FROM patient WHERE hn_id = ?",
       hn_id 
     );
     res.json({
@@ -504,6 +446,22 @@ app.delete("/api/patients/:hn_id", async (req, res) => {
   }
 });
 
+app.delete("/api/appointments/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    const results = await conn.query(
+      "DELETE FROM appointments WHERE id = ?",
+      id 
+    );
+    res.json({
+      message: "delete ok",
+      data: results[0],
+    });
+  } catch (error) {
+    console.error("Error cannot delete data", error.message);
+    res.status(500).json({ error: "ลบไม่ได้" });
+  }
+});
 
 
 app.delete("/api/caseurgents/:id", async (req, res) => {
@@ -554,6 +512,6 @@ app.get('/api/latlongappoint', async (req, res) => {
 
 
 app.listen(port, async () => {
-  await Mysqlinit();
+  await Myserverambulance();
   console.log(`Server is running on http://localhost:${port}`);
 });
