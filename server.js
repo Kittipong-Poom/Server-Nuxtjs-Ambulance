@@ -342,9 +342,6 @@ app.get("/api/appointments", async (req, res) => {
   }
 });
 
-
- 
-
 app.post("/api/caseurgents", async (req, res) => {
   try {
     const newUrgents = req.body;
@@ -429,12 +426,12 @@ app.put("/api/caseurgents/:id", async (req, res) => {
 });
 
 // Delete a patient
-app.delete("/api/patients/:hn_id", async (req, res) => {
+app.delete("/api/patients/:id", async (req, res) => {
   try {
-    let hn_id = req.params.hn_id;
+    let id = req.params.id;
     const results = await conn.query(
-      "DELETE FROM patient WHERE hn_id = ?",
-      hn_id 
+      "DELETE FROM patient WHERE hn = ?",
+      id
     );
     res.json({
       message: "delete ok",
@@ -450,7 +447,7 @@ app.delete("/api/appointments/:id", async (req, res) => {
   try {
     let id = req.params.id;
     const results = await conn.query(
-      "DELETE FROM appointments WHERE id = ?",
+      "DELETE FROM appointments WHERE hn = ?",
       id 
     );
     res.json({
@@ -463,6 +460,23 @@ app.delete("/api/appointments/:id", async (req, res) => {
   }
 });
 
+//เลือก select all หน้า QueueJob
+app.delete("/api/appointmentsall/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    const results = await conn.query(
+      "DELETE FROM appointments WHERE id = ?",
+      id 
+    );
+    res.json({
+      message: "delete ok",
+      data: results[0],
+    });
+  } catch (error) {
+    console.error("Error cannot delete data", error.message);
+    res.status(500).json({ error: "ลบไม่ได้" });
+  }
+});
 
 app.delete("/api/caseurgents/:id", async (req, res) => {
   try {
