@@ -1,7 +1,7 @@
 // const express = require('express');
 // const bodyParser = require('body-parser');
 // const cors = require('cors');
-
+import CryptoJS from 'crypto-js';
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -299,7 +299,7 @@ app.post("/api/appointments", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }); 
-app.get("/api/appointments/:hn", async (req, res) => {
+app.get("/api/appointment/:hn", async (req, res) => {
   try {
     const hn = req.params.hn; 
     const [results] = await conn.query(
@@ -430,7 +430,7 @@ app.delete("/api/patients/:id", async (req, res) => {
   try {
     let id = req.params.id;
     const results = await conn.query(
-      "DELETE FROM patient WHERE hn = ?",
+      "DELETE FROM patient WHERE hn_id = ?",
       id
     );
     res.json({
@@ -524,7 +524,39 @@ app.get('/api/latlongappoint', async (req, res) => {
 });
 
 
+app.get("/api/admin/:username", async (req, res) => {
+  try {
+    const encryptedUsername = req.params.username;
+    const secretKey = '1234'; // กำหนดคีย์ลับของคุณ
+    const iv = CryptoJS.enc.Hex.parse('000102030405060708090a0b0c0d0e0f');
+    // ถอดรหัส username
 
+    const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUsername), secretKey, { iv: iv });
+    const decryptedUsername = bytes.toString(CryptoJS.enc.Utf8);
+
+    console.log('Username ที่เข้ารหัส:', encryptedUsername);
+    console.log('Username ที่ถอดรหัส:', decryptedUsername);
+    // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ username ที่ถอดรหัสแล้ว
+    const [results] = await conn.query(
+      `SELECT 
+        admin.username
+      FROM 
+        admin
+      WHERE 
+        admin.username = ?`, 
+      [decryptedUsername]
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No username found for this hn" });
+    }
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error fetching admin data: ", error.message);
+    res.status(500).json({ error: "Error fetching admin data" });
+  }
+});
 app.listen(port, async () => {
   await Myserverambulance();
   console.log(`Server is running on http://localhost:${port}`);
