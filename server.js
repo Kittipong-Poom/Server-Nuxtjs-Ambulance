@@ -14,17 +14,22 @@ app.use(cors());
 app.use(bodyParser.json());
 
 let conn = null;
-
 const Myserverambulance = async () => {
-  conn = await mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "root",
-    database: process.env.DB_NAME || "ambulance5",
-    port: process.env.DB_PORT || 3306,
-  });
+  try {
+    conn = await mysql.createConnection({
+      host: process.env.DB_HOST || "localhost",
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASSWORD || "root",
+      database: process.env.DB_NAME || "ambulance5",
+      port: process.env.DB_PORT || 3306,
+    });
+    console.log("Connected to MySQL!");
+  } catch (error) {
+    console.error("Error connecting to MySQL:", error);
+  }
 };
 
+Myserverambulance();
 // Get all patients
 app.get("/api/patients", async (req, res) => {
   try {
