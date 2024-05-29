@@ -17,10 +17,10 @@ let conn = null;
 
 const Myserverambulance = async () => {
   conn = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "ambulance5",
+    host: "fdb1032.awardspace.net",
+    user: "4489917_ambulance5",
+    password: "y*WAbJzX5fyGedwq",
+    database: "4489917_ambulance5",
     port: 3306,
   });
 };
