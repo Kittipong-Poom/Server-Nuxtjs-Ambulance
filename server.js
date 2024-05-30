@@ -17,10 +17,10 @@ let conn = null;
 const Myserverambulance = async () => {
   try {
     conn = await mysql.createConnection({
-      host: process.env.DB_HOST || "fdb1032.awardspace.net",
-      user: process.env.DB_USER || "4489925_ambulance",
-      password: process.env.DB_PASSWORD || "dck+@^_46fnJ/_VY",
-      database: process.env.DB_NAME || "4489925_ambulance",
+      host: process.env.DB_HOST || "sql.freedb.tech",
+      user: process.env.DB_USER || "freedb_ambulance",
+      password: process.env.DB_PASSWORD || "N!pN3XybGyj&3FH",
+      database: process.env.DB_NAME || "freedb_ambulance",
       port: process.env.DB_PORT || 3306,
     });
     console.log("Connected to MySQL!");
