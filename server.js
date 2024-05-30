@@ -19,7 +19,7 @@ const Myserverambulance = async () => {
     conn = await mysql.createConnection({
       host: process.env.DB_HOST || "fdb1032.awardspace.net",
       user: process.env.DB_USER || "4489925_ambulance",
-      password: process.env.DB_PASSWORD || "Poom0620758133",
+      password: process.env.DB_PASSWORD || "dck+@^_46fnJ/_VY",
       database: process.env.DB_NAME || "4489925_ambulance",
       port: process.env.DB_PORT || 3306,
     });
