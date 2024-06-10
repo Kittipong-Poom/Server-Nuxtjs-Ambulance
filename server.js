@@ -530,37 +530,32 @@ app.get('/api/latlongappoint', async (req, res) => {
 });
  
 
-app.get("/api/admin/:username", async (req, res) => {
+app.get("/api/admin/login", async (req, res) => {
   try {
-    const encryptedUsername = req.params.username;
-    const secretKey = '1234'; // กำหนดคีย์ลับของคุณ
-    const iv = CryptoJS.enc.Hex.parse('000102030405060708090a0b0c0d0e0f');
-    // ถอดรหัส username
+    const { username, password } = req.query;
 
-    const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUsername), secretKey, { iv: iv });
-    const decryptedUsername = bytes.toString(CryptoJS.enc.Utf8);
+    console.log('เข้ารหัส:', username, password);
 
-    console.log('Username ที่เข้ารหัส:', encryptedUsername);
-    console.log('Username ที่ถอดรหัส:', decryptedUsername);
-    // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ username ที่ถอดรหัสแล้ว
+    // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ค่าแฮชที่ได้รับ
     const [results] = await conn.query(
-      `SELECT 
-        admin.username
+      `
+      SELECT 
+        admin.username, admin.password
       FROM 
         admin
       WHERE 
-        admin.username = ?`, 
-      [decryptedUsername]
+      (admin.username) = ? AND (admin.password) = ?`,
+      [username, password]
     );
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "No username found for this hn" });
+      return res.status(401).json({ success: false, message: "ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง" });
     }
 
-    res.json(results);
+    res.json({ success: true, user: results[0] });
   } catch (error) {
     console.error("Error fetching admin data: ", error.message);
-    res.status(500).json({ error: "Error fetching admin data" });
+    res.status(500).json({ success: false, error: "Error fetching admin data" });
   }
 });
 app.listen(port, async () => {
