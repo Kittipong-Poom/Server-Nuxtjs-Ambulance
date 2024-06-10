@@ -18,8 +18,8 @@ const Myserverambulance = async () => {
   try {
     conn = await mysql.createConnection({
       host: process.env.DB_HOST || "sql.freedb.tech",
-      user: process.env.DB_USER || "freedb_ambulance",
-      password: process.env.DB_PASSWORD || "N!pN3XybGyj&3FH",
+      user: process.env.DB_USER || "freedb_ambulance2",
+      password: process.env.DB_PASSWORD || "$zepU@@&&6JBAZk",
       database: process.env.DB_NAME || "freedb_ambulance",
       port: process.env.DB_PORT || 3306,
     });
@@ -333,6 +333,7 @@ app.get("/api/appointment/:hn", async (req, res) => {
     res.status(500).json({ error: "Error fetching appointments" });
   }
 });
+
 app.get("/api/appointments", async (req, res) => {
   try {
     const results = await conn.query(
