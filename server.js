@@ -1,7 +1,7 @@
 // const express = require('express');
 // const bodyParser = require('body-parser');
 // const cors = require('cors');
-import CryptoJS from 'crypto-js';
+
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -17,10 +17,10 @@ let conn = null;
 const Myserverambulance = async () => {
   try {
     conn = await mysql.createConnection({
-      host: process.env.DB_HOST || "sql.freedb.tech",
-      user: process.env.DB_USER || "freedb_ambulance2",
-      password: process.env.DB_PASSWORD || "$zepU@@&&6JBAZk",
-      database: process.env.DB_NAME || "freedb_ambulance",
+      host: process.env.DB_HOST || "DESKTOP-PALOK41",
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASSWORD || "MFUdatabase548779",
+      database: process.env.DB_NAME || "ambulance",
       port: process.env.DB_PORT || 3306,
     });
     console.log("Connected to MySQL!");
