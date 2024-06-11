@@ -17,7 +17,7 @@ let conn = null;
 const Myserverambulance = async () => {
   try {
     conn = await mysql.createConnection({
-      host: process.env.DB_HOST || "DESKTOP-PALOK41",
+      host: process.env.DB_HOST || "127.0.0.1",
       user: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "MFUdatabase548779",
       database: process.env.DB_NAME || "ambulance",
