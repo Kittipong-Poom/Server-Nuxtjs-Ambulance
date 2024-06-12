@@ -18,7 +18,7 @@ app.use(bodyParser.json());
   
 let conn = null;
 const Myserverambulance = async () => {
-  try {
+  try { 
     conn = await mysql.createConnection({
       host: process.env.DB_HOST ||"DESKTOP-PAL0K41",
       user: process.env.DB_USER || "root",
