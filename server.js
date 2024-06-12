@@ -6,18 +6,21 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2/promise";
+import dotenv from 'dotenv';
 
 const app = express();
-const port =  5000;
+const port = process.env.PORT || 5000;
+  
+dotenv.config();
 
 app.use(cors());
 app.use(bodyParser.json());
- 
+  
 let conn = null;
 const Myserverambulance = async () => {
   try {
     conn = await mysql.createConnection({
-      host: process.env.DB_HOST || "10.1.29.41",
+      host: process.env.DB_HOST ||"DESKTOP-PAL0K41",
       user: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "MFUdatabase548779",
       database: process.env.DB_NAME || "ambulance",
