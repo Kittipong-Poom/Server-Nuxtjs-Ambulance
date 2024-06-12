@@ -6,12 +6,12 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2/promise";
-import dotenv from 'dotenv';
+import 'dotenv/config'
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port =  5000;
   
-dotenv.config();
+
 
 app.use(cors());
 app.use(bodyParser.json());
