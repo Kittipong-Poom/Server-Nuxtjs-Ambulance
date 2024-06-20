@@ -5,16 +5,16 @@ import mysql from "mysql2/promise";
 import 'dotenv/config'
 
 const app = express();
-const port =  5000;
-  
+const port = process.env.PORT || 5000;
+
 app.use(cors());
 app.use(bodyParser.json());
-  
+
 let conn = null;
 const Myserverambulance = async () => {
-  try { 
+  try {
     conn = await mysql.createConnection({
-      host: process.env.DB_HOST ||"10.1.29.41",
+      host: process.env.DB_HOST || "10.1.29.41",
       user: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "MFUdatabase548779",
       database: process.env.DB_NAME || "ambulance",
@@ -48,7 +48,7 @@ app.get("/api/patients", async (req, res) => {
 
 // Get all patients
 app.get("/api/patients/time", async (req, res) => {
-  try { 
+  try {
     const results = await conn.query(
       `SELECT *
       FROM patient
@@ -226,7 +226,7 @@ app.get("/api/getviolence/white", async (req, res) => {
 app.get("/api/patients/:hn_id", async (req, res) => {
   try {
     let hn_id = req.params.hn_id;
-    const results = await conn.query("SELECT * FROM patient WHERE hn_id = ?",hn_id);
+    const results = await conn.query("SELECT * FROM patient WHERE hn_id = ?", hn_id);
     if (results[0].length == 0) {
       return res.status(404).json({ message: "Patient not found" });
     }
@@ -289,7 +289,7 @@ app.post("/api/appointments", async (req, res) => {
       number: newAppointment.number,
       address: newAppointment.address,
     };
- 
+
     const sql = "INSERT INTO appointments SET ?"; // ใช้ parameterized query
 
     const [results] = await conn.query(sql, appointmentData);
@@ -301,10 +301,10 @@ app.post("/api/appointments", async (req, res) => {
     console.error("Error executing MySQL query:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}); 
+});
 app.get("/api/appointment/:hn", async (req, res) => {
   try {
-    const hn = req.params.hn; 
+    const hn = req.params.hn;
     const [results] = await conn.query(
       `SELECT 
         appointments.hn,
@@ -319,7 +319,7 @@ app.get("/api/appointment/:hn", async (req, res) => {
       ON 
         appointments.hn = patient.hn
       WHERE 
-        appointments.hn = ?`, 
+        appointments.hn = ?`,
       [hn]
     );
     if (results.length === 0) {
@@ -337,7 +337,7 @@ app.get("/api/appointments", async (req, res) => {
     const results = await conn.query(
       `SELECT *
       FROM appointments
-      `  
+      `
     );
     res.json(results[0]);
   } catch (error) {
@@ -383,7 +383,7 @@ app.put("/api/patientsedit/:hn_id", async (req, res) => {
   try {
     const hn_id = req.params.hn_id;
     const updatepatient = req.body;
-    
+
     const results = await conn.query("UPDATE patient SET ? WHERE hn_id = ?", [
       updatepatient,
       hn_id,
@@ -394,13 +394,13 @@ app.put("/api/patientsedit/:hn_id", async (req, res) => {
     console.error("Error data cannot Update patient", error.message);
     res.status(500).json({ error: "อัพเดตไม่ได้" });
   }
-}); 
+});
 
 app.put("/api/appointments/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const updateappointment = req.body;
-    
+
     const results = await conn.query("UPDATE appointments SET ? WHERE id = ?", [
       updateappointment,
       id,
@@ -411,7 +411,7 @@ app.put("/api/appointments/:id", async (req, res) => {
     console.error("Error data cannot Update patient", error.message);
     res.status(500).json({ error: "อัพเดตไม่ได้" });
   }
-}); 
+});
 
 app.put("/api/caseurgents/:id", async (req, res) => {
   try {
@@ -452,7 +452,7 @@ app.delete("/api/appointments/:id", async (req, res) => {
     let id = req.params.id;
     const results = await conn.query(
       "DELETE FROM appointments WHERE hn = ?",
-      id 
+      id
     );
     res.json({
       message: "delete ok",
@@ -470,7 +470,7 @@ app.delete("/api/appointmentsall/:id", async (req, res) => {
     let id = req.params.id;
     const results = await conn.query(
       "DELETE FROM appointments WHERE id = ?",
-      id 
+      id
     );
     res.json({
       message: "delete ok",
@@ -512,7 +512,7 @@ app.get('/api/latlongurgent', async (req, res) => {
     res.status(statusCode).json({ error: 'เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด' });
   }
 });
- 
+
 app.get('/api/latlongappoint', async (req, res) => {
   try {
     const results = await conn.query('SELECT lati , longi , status_case_id FROM appointments');
@@ -522,11 +522,11 @@ app.get('/api/latlongappoint', async (req, res) => {
     res.json(results[0]);
   } catch (error) {
     console.error('Error fetching all caseurgents:', error.message);
-    let statusCode = error.statusCode ||  500;
+    let statusCode = error.statusCode || 500;
     res.status(statusCode).json({ error: 'เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด' });
   }
 });
- 
+
 
 app.get("/api/admin/login", async (req, res) => {
   try {
@@ -556,7 +556,7 @@ app.get("/api/admin/login", async (req, res) => {
     res.status(500).json({ success: false, error: "Error fetching admin data" });
   }
 });
-app.listen(port, async () => {
+app.listen(port, '0.0.0.0', async () => {  // Ensure server listens on all network interfaces
   await Myserverambulance();
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on PORT http://localhost:${port}`);
 });
