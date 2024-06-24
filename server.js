@@ -2,10 +2,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2/promise";
-import 'dotenv/config'
+
+import 'dotenv/config';
 
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,8 +26,10 @@ const Myserverambulance = async () => {
     console.error("Error connecting to MySQL:", error);
   }
 };
-
-
+ 
+app.listen(PORT, '10.1.29.40', async () => {
+  await Myserverambulance();
+  console.log('Server is running on http://10.1.29.40:5000');});
 Myserverambulance();
 // Get all patients
 app.get("/api/patients", async (req, res) => {
@@ -556,7 +559,4 @@ app.get("/api/admin/login", async (req, res) => {
     res.status(500).json({ success: false, error: "Error fetching admin data" });
   }
 });
-app.listen(port, '0.0.0.0', async () => {  // Ensure server listens on all network interfaces
-  await Myserverambulance();
-  console.log(`Server is running on PORT http://localhost:${port}`);
-});
+
