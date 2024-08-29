@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Import database connection
 import { conn } from './server.js';
-import jwt from 'jsonwebtoken';
+
 
 router.get("/api/patients", async (req, res) => {
     try {
@@ -523,7 +523,7 @@ router.get("/api/patients", async (req, res) => {
     try {
       const { username, password } = req.query;
   
-      console.log("เข้ารหัส:", username, password);
+      console.log('เข้ารหัส:', username, password);
   
       // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ค่าแฮชที่ได้รับ
       const [results] = await conn.query(
@@ -538,22 +538,16 @@ router.get("/api/patients", async (req, res) => {
       );
   
       if (results.length === 0) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            message: "ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง",
-          });
+        return res.status(401).json({ success: false, message: "ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง" });
       }
-      const token = jwt.sign({ username: results[0].username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.json({ success: true,token, user: results[0] });
+  
+      res.json({ success: true, user: results[0] });
     } catch (error) {
       console.error("Error fetching admin data: ", error.message);
-      res
-        .status(500)
-        .json({ success: false, error: "Error fetching admin data" });
+      res.status(500).json({ success: false, error: "Error fetching admin data" });
     }
   });
+  
   
 
 export default router;
