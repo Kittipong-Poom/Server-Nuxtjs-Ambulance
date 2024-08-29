@@ -500,7 +500,7 @@ router.get("/api/patients", async (req, res) => {
         .json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด" });
     }
   });
-  
+   
   router.get("/api/latlongappoint", async (req, res) => {
     try {
       const results = await conn.query(
