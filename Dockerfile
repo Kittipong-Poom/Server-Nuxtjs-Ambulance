@@ -12,7 +12,7 @@ RUN npm install
 
 # คัดลอกไฟล์ทั้งหมดมาที่ working directory
 COPY . .
-
+ 
 # เปิดพอร์ต
 EXPOSE 5000
 

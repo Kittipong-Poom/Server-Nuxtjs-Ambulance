@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 app.use(router); 
 
 let conn = null; 
