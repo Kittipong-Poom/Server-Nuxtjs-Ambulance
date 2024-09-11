@@ -556,5 +556,5 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ success: false, error: "Error fetching admin data" });
     }
   });
-
+ 
 export default router;
