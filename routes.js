@@ -557,7 +557,5 @@ router.get("/api/patients", async (req, res) => {
     }
   });
   
-  
-  
 
 export default router;
