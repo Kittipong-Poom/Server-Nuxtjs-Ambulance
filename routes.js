@@ -382,7 +382,8 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ error: "อัพเดตไม่ได้" });
     }
   });
-  
+
+  //อัพเดตนัดหมาย
   router.put("/api/appointments/:id", async (req, res) => {
     try {
       const id = req.params.id;
@@ -519,6 +520,7 @@ router.get("/api/patients", async (req, res) => {
     }
   });
   
+  //สำหรับ login
   router.get("/api/admin/login", async (req, res) => {
     try {
       const { username, password } = req.query;
