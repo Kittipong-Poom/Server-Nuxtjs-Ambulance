@@ -4,7 +4,7 @@ const router = express.Router();
 // Import database connection
 import { conn } from './server.js';
 
- 
+
 router.get("/api/patients", async (req, res) => {
     try {
       const results = await conn.query(
