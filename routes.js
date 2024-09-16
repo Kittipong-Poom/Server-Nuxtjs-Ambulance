@@ -278,7 +278,8 @@ router.get("/api/patients", async (req, res) => {
       const sql = "INSERT INTO appointments SET ?"; // ใช้ parameterized query
   
       const [results] = await conn.query(sql, appointmentData);
-  
+      console.log('checky');
+      
       appointmentData.id = results.insertId;
       console.log("Inserted Appointment:", [appointmentData]); // Log inserted appointment
       res.json(appointmentData);
@@ -332,7 +333,7 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ error: "Error fectching patients" });
     }
   });
-  
+
   router.post("/api/caseurgents", async (req, res) => {
     try {
       const newUrgents = req.body;
@@ -382,8 +383,8 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ error: "อัพเดตไม่ได้" });
     }
   });
-
-  //อัพเดตนัดหมาย
+  
+  //สำหรับอัพเดตข้อมูลนัดหมาย ผู้ป่วย
   router.put("/api/appointments/:id", async (req, res) => {
     try {
       const id = req.params.id;
@@ -487,25 +488,7 @@ router.get("/api/patients", async (req, res) => {
   router.get("/api/latlongurgent", async (req, res) => {
     try {
       const results = await conn.query(
-        "SELECT lati, longi,status FROM caseurgents"
-      );
-      if (results[0].length === 0) {
-        throw { statusCode: 404, message: "ไม่พบข้อมูลพิกัด" };
-      }
-      res.json(results[0]);
-    } catch (error) {
-      console.error("Error fetching all caseurgents:", error.message);
-      let statusCode = error.statusCode || 500;
-      res
-        .status(statusCode)
-        .json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด" });
-    }
-  });
-   
-  router.get("/api/latlongappoint", async (req, res) => {
-    try {
-      const results = await conn.query(
-        "SELECT lati , longi , status_case_id FROM appointments"
+        "SELECT lati, longi,status, service_date FROM caseurgents"
       );
       if (results[0].length === 0) {
         throw { statusCode: 404, message: "ไม่พบข้อมูลพิกัด" };
@@ -520,19 +503,29 @@ router.get("/api/patients", async (req, res) => {
     }
   });
   
+  router.get("/api/latlongappoint", async (req, res) => {
+    try {
+      const results = await conn.query(
+        "SELECT lati , longi , status_case_id, service_date FROM appointments"
+      );
+      if (results[0].length === 0) {
+        throw { statusCode: 404, message: "ไม่พบข้อมูลพิกัด" };
+      }
+      res.json(results[0]);
+    } catch (error) {
+      console.error("Error fetching all caseurgents:", error.message);
+      let statusCode = error.statusCode || 500;
+      res
+        .status(statusCode)
+        .json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลพิกัดทั้งหมด" });
+    }
+  });
   //สำหรับ login
   router.get("/api/admin/login", async (req, res) => {
     try {
       const { username, password } = req.query;
   
-      // ข้อมูลทดสอบ
-      const testUsername = 'testuser';
-      const testPassword = 'testpass';
-  
-      // ตรวจสอบข้อมูลทดสอบ
-      if (username === testUsername && password === testPassword) {
-        return res.json({ success: true, user: { username: testUsername } });
-      }
+      console.log('เข้ารหัส:', username, password);
   
       // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ค่าแฮชที่ได้รับ
       const [results] = await conn.query(
@@ -556,5 +549,7 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ success: false, error: "Error fetching admin data" });
     }
   });
- 
+  
+
+
 export default router;
