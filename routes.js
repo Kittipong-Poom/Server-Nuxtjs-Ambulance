@@ -525,7 +525,14 @@ router.get("/api/patients", async (req, res) => {
     try {
       const { username, password } = req.query;
   
-      console.log('เข้ารหัส:', username, password);
+      // ข้อมูลทดสอบ
+      const testUsername = 'testuser';
+      const testPassword = 'testpass';
+  
+      // ตรวจสอบข้อมูลทดสอบ
+      if (username === testUsername && password === testPassword) {
+        return res.json({ success: true, user: { username: testUsername } });
+      }
   
       // ค้นหาข้อมูลผู้ใช้ในฐานข้อมูลโดยใช้ค่าแฮชที่ได้รับ
       const [results] = await conn.query(
@@ -549,7 +556,7 @@ router.get("/api/patients", async (req, res) => {
       res.status(500).json({ success: false, error: "Error fetching admin data" });
     }
   });
-  
+
 
 
 export default router;
