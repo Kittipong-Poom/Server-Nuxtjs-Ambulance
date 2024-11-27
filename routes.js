@@ -4,7 +4,8 @@ const router = express.Router();
 // Import database connection
 import { conn } from './server.js';
 
-
+const testUsername = 'testuser';
+const testPassword = 'testpass';
 router.get("/api/patients", async (req, res) => {
     try {
       const results = await conn.query(
@@ -557,6 +558,77 @@ router.get("/api/patients", async (req, res) => {
     }
   });
 
+  router.get("/api/user", async (req, res) => {
+    try {
+        const { username, password } = req.query;
 
+        // หากเป็น test user
+        if (username === testUsername && password === testPassword) {
+            return res.json([
+                {
+                    user_id: 0,
+                    name: "Test User",
+                    username: testUsername,
+                    password: testPassword,
+                },
+            ]);
+        }
+
+        const [results] = await conn.query(
+            "SELECT user_id, name, username, password FROM login"
+        );
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: "ไม่พบข้อมูลผู้ใช้งาน" });
+        }
+
+        res.json(results);
+    } catch (error) {
+        console.error("Error fetching user data:", error.message);
+        res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้งาน" });
+    }
+});
+
+router.delete("/api/user/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // ป้องกันการลบ testUser
+  if (id === "0") {
+      return res
+          .status(400)
+          .json({ error: "ไม่สามารถลบผู้ใช้งานทดสอบ (Test User) ได้" });
+  }
+
+  try {
+      const [results] = await conn.query("DELETE FROM login WHERE user_id = ?", [id]);
+      res.json({ message: "ลบสำเร็จ", data: results });
+  } catch (error) {
+      console.error("Error deleting user:", error.message);
+      res.status(500).json({ error: "ลบไม่ได้" });
+  }
+});
+
+router.put("/api/user/:id", async (req, res) => {
+  const { id } = req.params;
+  const updateUser = req.body;
+
+  // ป้องกันการแก้ไข testUser
+  if (id === "0") {
+      return res
+          .status(400)
+          .json({ error: "ไม่สามารถแก้ไขข้อมูลผู้ใช้งานทดสอบ (Test User) ได้" });
+  }
+
+  try {
+      const [results] = await conn.query("UPDATE login SET ? WHERE user_id = ?", [
+          updateUser,
+          id,
+      ]);
+      res.json({ message: "แก้ไขสำเร็จ", data: results });
+  } catch (error) {
+      console.error("Error updating user:", error.message);
+      res.status(500).json({ error: "แก้ไขไม่ได้" });
+  }
+});
 
 export default router;
