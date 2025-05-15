@@ -267,6 +267,7 @@ router.get("/api/patients", async (req, res) => {
       // ปรับรูปแบบข้อมูลที่ส่งไปให้เข้ากับโครงสร้างของตาราง appointments
       const appointmentData = {
         service_date: newAppointment.service_date,
+        fname_lname: newAppointment.fname_lname,
         time: newAppointment.time,
         hn: newAppointment.hn,
         status_case_id: newAppointment.status_case_id,
@@ -295,6 +296,7 @@ router.get("/api/patients", async (req, res) => {
       const [results] = await conn.query(
         `SELECT 
           appointments.hn,
+          appointments.fname_lname,
           appointments.service_date,
           appointments.time,
           appointments.status_case_id,
