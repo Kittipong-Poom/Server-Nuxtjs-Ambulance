@@ -275,6 +275,7 @@ router.get("/api/patients", async (req, res) => {
         longi: newAppointment.longi,
         number: newAppointment.number,
         address: newAppointment.address,
+        other: newAppointment.other,
       };
   
       const sql = "INSERT INTO appointments SET ?"; // ใช้ parameterized query
@@ -301,6 +302,7 @@ router.get("/api/patients", async (req, res) => {
           appointments.time,
           appointments.status_case_id,
           appointments.number
+          appointments.other
         FROM 
           appointments
         JOIN 
